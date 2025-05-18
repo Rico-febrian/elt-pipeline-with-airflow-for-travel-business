@@ -2,3 +2,4 @@ pandas
 pendulum
 minio
 cryptography
+pangres
