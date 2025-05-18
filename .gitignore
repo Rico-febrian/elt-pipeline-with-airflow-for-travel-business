@@ -1,0 +1,6 @@
+venv/
+database_schema/source/init.sql
+.env
+**/__pycache__/
+**/.ipynb_checkpoints/
+**/script/.env

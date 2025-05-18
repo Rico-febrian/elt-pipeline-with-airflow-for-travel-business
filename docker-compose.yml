@@ -1,0 +1,132 @@
+version: '3.8'
+services:
+  airflow:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: airflow_standalone
+    restart: on-failure
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW_DB_URI}
+      - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
+      - AIRFLOW__CORE__FERNET_KEY=${AIRFLOW_FERNET_KEY}
+    depends_on:
+      - airflow_metadata
+    ports:
+      - ${AIRFLOW_PORT}:8080
+    volumes:
+      - ./dags:/opt/airflow/dags
+    networks:
+      - data_orchestration_week_2_net
+
+  airflow_metadata:
+    image: postgres:latest
+    container_name: airflow_metadata
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${AIRFLOW_DB_USER}
+      POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_DB_NAME}
+    ports:
+      - ${AIRFLOW_DB_PORT}:5432
+    volumes:
+      - airflow_metadata:/var/lib/postgresql/data
+    networks:
+      - data_orchestration_week_2_net
+
+  travel_source_db:
+    image: postgres:latest
+    container_name: travel_source_db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${SOURCE_DB_USER}
+      POSTGRES_PASSWORD: ${SOURCE_DB_PASSWORD}
+      POSTGRES_DB: ${SOURCE_DB_NAME}
+    ports:
+      - ${SOURCE_DB_PORT}:5432
+    volumes:
+      - ./database_schema/source/:/docker-entrypoint-initdb.d
+      - source_db_vol:/var/lib/postgresql/data
+    networks:
+      - data_orchestration_week_2_net
+
+  travel_staging_db:
+    image: postgres:latest
+    container_name: travel_staging_db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${STG_DB_USER}
+      POSTGRES_PASSWORD: ${STG_DB_PASSWORD}
+      POSTGRES_DB: ${STG_DB_NAME}
+    ports:
+      - ${STG_DB_PORT}:5432
+    volumes:
+      - ./database_schema/staging/:/docker-entrypoint-initdb.d
+      - staging_db_vol:/var/lib/postgresql/data
+    networks:
+      - data_orchestration_week_2_net
+
+  travel_warehouse_db:
+    image: postgres:latest
+    container_name: travel_warehouse_db
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${DWH_DB_USER}
+      POSTGRES_PASSWORD: ${DWH_DB_PASSWORD}
+      POSTGRES_DB: ${DWH_DB_NAME}
+    ports:
+      - ${DWH_DB_PORT}:5432
+    volumes:
+      - ./database_schema/warehouse/:/docker-entrypoint-initdb.d
+      - warehouse_db_vol:/var/lib/postgresql/data
+    networks:
+      - data_orchestration_week_2_net
+
+  minio:
+    image: minio/minio:RELEASE.2024-06-13T22-53-53Z
+    container_name: minio
+    hostname: minio
+    restart: on-failure
+    volumes:
+      - minio-data:/data
+    ports:
+      - ${MINIO_API_PORT}:9000
+      - ${MINIO_CONSOLE_PORT}:9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - data_orchestration_week_2_net
+
+volumes:
+  airflow_metadata:
+    driver: local
+    name: airflow_metadata
+
+  source_db_vol:
+    driver: local
+    name: source_db_vol
+
+  staging_db_vol:
+    driver: local
+    name: staging_db_vol
+
+  warehouse_db_vol:
+    driver: local
+    name: warehouse_db_vol
+
+  minio-data:
+    driver: local
+    name: minio-data
+
+networks:
+  data_orchestration_week_2_net:
+    driver: bridge
+    name: data_orchestration_week_2_net
