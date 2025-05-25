@@ -4,8 +4,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: airflow_standalone
-    restart: on-failure
+    container_name: airflow_standalones
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=${AIRFLOW_DB_URI}
@@ -51,22 +50,6 @@ services:
     networks:
       - data_orchestration_week_2_net
 
-  travel_staging_db:
-    image: postgres:latest
-    container_name: travel_staging_db
-    restart: on-failure
-    environment:
-      POSTGRES_USER: ${STG_DB_USER}
-      POSTGRES_PASSWORD: ${STG_DB_PASSWORD}
-      POSTGRES_DB: ${STG_DB_NAME}
-    ports:
-      - ${STG_DB_PORT}:5432
-    volumes:
-      - ./database_schema/staging/:/docker-entrypoint-initdb.d
-      - staging_db_vol:/var/lib/postgresql/data
-    networks:
-      - data_orchestration_week_2_net
-
   travel_warehouse_db:
     image: postgres:latest
     container_name: travel_warehouse_db
@@ -82,22 +65,6 @@ services:
       - warehouse_db_vol:/var/lib/postgresql/data
     networks:
       - data_orchestration_week_2_net
-
-#  travel_log_db:
-#   image: postgres:latest
-#   container_name: travel_log_db
-#   restart: on-failure
-#   environment:
-#     POSTGRES_USER: ${LOG_DB_USER}
-#     POSTGRES_PASSWORD: ${LOG_DB_PASSWORD}
-#     POSTGRES_DB: ${LOG_DB_NAME}
-#   ports:
-#     - ${LOG_DB_PORT}:5432
-#   volumes:
-#     - ./database_schema/log/:/docker-entrypoint-initdb.d
-#     - log_db_vol:/var/lib/postgresql/data
-#   networks:
-#     - data_orchestration_week_2_net
 
   minio:
     image: minio/minio:RELEASE.2024-06-13T22-53-53Z
@@ -130,17 +97,9 @@ volumes:
     driver: local
     name: source_db_vol
 
-  staging_db_vol:
-    driver: local
-    name: staging_db_vol
-
   warehouse_db_vol:
     driver: local
     name: warehouse_db_vol
-
-#  log_db_vol:
-#    driver: local
-#    name: log_db_vol
 
   minio-data:
     driver: local
