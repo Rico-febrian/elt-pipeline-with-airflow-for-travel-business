@@ -1,4 +1,4 @@
-pandas
-pendulum
-minio
-cryptography
+pandas=2.2.3
+pendulum=3.1.0
+minio=7.2.15
+cryptography=45.0.2
