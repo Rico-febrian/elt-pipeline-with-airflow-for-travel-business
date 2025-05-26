@@ -1,5 +1,5 @@
 venv/
-database_schema/source/init.sql
+init.sql
 .env
 **/__pycache__/
 **/.ipynb_checkpoints/
