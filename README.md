@@ -14,7 +14,15 @@ This project demonstrates how to:
 * **Load** it into a staging schema in a data warehouse (also PostgreSQL) and
 * **Transform** it into a final schema for analysis or reporting
 
-!\[Insert image of architecture or data flow here]
+---
+
+## 🔄 How the Pipeline Works
+
+![elt-design](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/elt-design.png)
+
+* **Extract Task**: Reads data from source DB and stores it as CSV in MinIO
+* **Load Task**: Loads CSVs from MinIO to staging schema in warehouse
+* **Transform Task**: Executes SQL to transform staging data into final schema
 
 ---
 
@@ -167,7 +175,13 @@ Steps:
 2. Click **+** to add new connection
 3. Fill in the details as per your `.env` setup
 
-!\[Insert image of each connection setup]
+### Source and Warehouse Connection
+
+![database-connection](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/database-connection.png)
+
+### MinIO Connection
+
+![minio-connection](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/minio-connection.png)
 
 ---
 
@@ -186,7 +200,7 @@ Steps:
   - Navigate to the selected bucket.
   - You should see the extracted data files in CSV format.
     
-    iamge of minio bucket with extracted data (CSV)
+    ![extracted-data](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/extracted-file-in-minio.jpg)
 
 - ### Staging and Transformed data in Data Warehouse
   To verify the data in your data warehouse:
@@ -200,15 +214,22 @@ Steps:
     !\[Insert image showing data in DBeaver or any DB client]
 
 - ### DAG Result
+    
+    - DAG Graph
 
+      ![dag-graph](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/dag%20graph.png)
 
----
+    - Extract Task (running in parallel)
 
-## 🔄 How the Pipeline Works
+      ![extract-task](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/extract-task.png)
 
-* **Extract Task**: Reads data from source DB and stores it as CSV in MinIO
-* **Load Task**: Loads CSVs from MinIO to staging schema in warehouse
-* **Transform Task**: Executes SQL to transform staging data into final schema
+    - Load Task (running sequentially)
+
+      ![load-task](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/load-task.png)
+
+    - Transform Task (running sequentially)
+
+      ![transform-task](https://github.com/Rico-febrian/elt-pipeline-with-airflow-for-travel-business/blob/main/pict/transform-task.png)
 
 ---
 
