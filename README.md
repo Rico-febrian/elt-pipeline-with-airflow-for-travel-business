@@ -211,8 +211,6 @@ Steps:
       - ✅ Raw data from the source should be available under the **staging** schema.
       - ✅ Transformed data should be available under the **final** schema.
 
-    !\[Insert image showing data in DBeaver or any DB client]
-
 - ### DAG Result
     
     - DAG Graph
@@ -235,9 +233,9 @@ Steps:
 
 ## 📬 Feedback & Articles
 
-Thanks for checking out this project! If you have feedback, feel free to share.
+**Thank you for exploring this project!** If you have any feedback, feel free to share, I'm always open to suggestions.
 
-I also write about my learning journey on Medium — [check out my articles](https://medium.com/@ricofebrian731) and connect with me on [LinkedIn](https://www.linkedin.com/in/ricofebrian).
+Additionally, I write about my learning journey on Medium. You can check out my articles [here](https://medium.com/@ricofebrian731). Let’s also connect on [LinkedIn](https://www.linkedin.com/in/ricofebrian).
 
 ---
 
