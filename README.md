@@ -121,14 +121,19 @@ MINIO_ROOT_PASSWORD=...       # eg: minio123
 MINIO_API_PORT=...            # eg: 9000 (commonly used for MinIO API)
 MINIO_CONSOLE_PORT=...        # eg: 9001 (commonly used for MinIO Console)
 ```
+### 4. Extract Source Dataset
+```bash
+cd database_schema/source/
+unzip init.zip
+```
 
-### 4. Build and Start Services
+### 5. Build and Start Services
 
 ```bash
 docker-compose up --build -d
 ```
 
-### 5. Create Airflow User
+### 6. Create Airflow User
 
 ```bash
 docker exec -it airflow_standalones airflow users create \
@@ -140,7 +145,7 @@ docker exec -it airflow_standalones airflow users create \
     --password your_password
 ```
 
-### 6. Open Airflow UI
+### 7. Open Airflow UI
 
 Access the UI at: [http://localhost:8080](http://localhost:8080) (or your defined port).
 
@@ -176,12 +181,26 @@ Steps:
 
 ## ✅ Verify the Results
 
-Open a tool like DBeaver and check your data warehouse:
+- ### Extracted Data in MinIO Bucket
+  - Log in to the MinIO console (eg. localhost:9000) using the username and password defined in your `.env` file.
+  - Navigate to the selected bucket.
+  - You should see the extracted data files in CSV format.
+    
+    iamge of minio bucket with extracted data (CSV)
 
-* Data from the source should appear in the **staging** schema
-* Transformed data should appear in the **final** schema
+- ### Staging and Transformed data in Data Warehouse
+  To verify the data in your data warehouse:
 
-!\[Insert image showing data in DBeaver or any DB client]
+  - Open your preferred database client (e.g., DBeaver).
+  - Connect to your warehouse database.
+  - Check the following:
+      - ✅ Raw data from the source should be available under the **staging** schema.
+      - ✅ Transformed data should be available under the **final** schema.
+
+    !\[Insert image showing data in DBeaver or any DB client]
+
+- ### DAG Result
+
 
 ---
 
